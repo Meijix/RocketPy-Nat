@@ -481,3 +481,41 @@ class LiquidMotor(Motor):
         """
         self.prints.all()
         self.plots.all()
+
+    def to_dict(self, include_outputs=True):
+        data = super().to_dict(include_outputs)
+        data.update(
+            {
+                "positioned_tanks": [
+                    {"tank": tank["tank"], "position": tank["position"]}
+                    for tank in self.positioned_tanks
+                ],
+            }
+        )
+        return data
+
+    @classmethod
+    def from_dict(cls, data):
+        motor = cls(
+            thrust_source=data["thrust_source"],
+            burn_time=data["burn_time"],
+            nozzle_radius=data["nozzle_radius"],
+            dry_mass=data["dry_mass"],
+            center_of_dry_mass_position=data["center_of_dry_mass_position"],
+            dry_inertia=(
+                data["dry_I_11"],
+                data["dry_I_22"],
+                data["dry_I_33"],
+                data["dry_I_12"],
+                data["dry_I_13"],
+                data["dry_I_23"],
+            ),
+            nozzle_position=data["nozzle_position"],
+            interpolation_method=data["interpolate"],
+            coordinate_system_orientation=data["coordinate_system_orientation"],
+        )
+
+        for tank in data["positioned_tanks"]:
+            motor.add_tank(tank["tank"], tank["position"])
+
+        return motor
