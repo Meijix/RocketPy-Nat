@@ -24,6 +24,8 @@ from scipy.interpolate import (
 
 from rocketpy._encoders import from_hex_decode, to_hex_encode
 
+from ..plots.plot_helpers import show_or_save_plot
+
 # Numpy 1.x compatibility,
 # TODO: remove these lines when all dependencies support numpy>=2.0.0
 if np.lib.NumpyVersion(np.__version__) >= "2.0.0b1":
@@ -1380,7 +1382,7 @@ class Function:  # pylint: disable=too-many-public-methods
         )
 
     # Define all presentation methods
-    def __call__(self, *args):
+    def __call__(self, *args, filename=None):
         """Plot the Function if no argument is given. If an
         argument is given, return the value of the function at the desired
         point.
@@ -1394,13 +1396,18 @@ class Function:  # pylint: disable=too-many-public-methods
             evaluated at all points in the list and a list of floats will be
             returned. If the function is N-D, N arguments must be given, each
             one being an scalar or list.
+        filename : str | None, optional
+            The path the plot should be saved to. By default None, in which case
+            the plot will be shown instead of saved. Supported file endings are:
+            eps, jpg, jpeg, pdf, pgf, png, ps, raw, rgba, svg, svgz, tif, tiff
+            and webp (these are the formats supported by matplotlib).
 
         Returns
         -------
         ans : None, scalar, list
         """
         if len(args) == 0:
-            return self.plot()
+            return self.plot(filename=filename)
         else:
             return self.get_value(*args)
 
@@ -1461,8 +1468,11 @@ class Function:  # pylint: disable=too-many-public-methods
         Function.plot_2d if Function is 2-Dimensional and forward arguments
         and key-word arguments."""
         if isinstance(self, list):
+            # Extract filename from kwargs
+            filename = kwargs.get("filename", None)
+
             # Compare multiple plots
-            Function.compare_plots(self)
+            Function.compare_plots(self, filename)
         else:
             if self.__dom_dim__ == 1:
                 self.plot_1d(*args, **kwargs)
@@ -1490,6 +1500,7 @@ class Function:  # pylint: disable=too-many-public-methods
         force_points=False,
         return_object=False,
         equal_axis=False,
+        filename=None,
     ):
         """Plot 1-Dimensional Function, from a lower limit to an upper limit,
         by sampling the Function several times in the interval. The title of
@@ -1520,6 +1531,11 @@ class Function:  # pylint: disable=too-many-public-methods
             Setting force_points to True will plot all points, as a scatter, in
             which the Function was evaluated in the dataset. Default value is
             False.
+        filename : str | None, optional
+            The path the plot should be saved to. By default None, in which case
+            the plot will be shown instead of saved. Supported file endings are:
+            eps, jpg, jpeg, pdf, pgf, png, ps, raw, rgba, svg, svgz, tif, tiff
+            and webp (these are the formats supported by matplotlib).
 
         Returns
         -------
@@ -1560,7 +1576,7 @@ class Function:  # pylint: disable=too-many-public-methods
         plt.title(self.title)
         plt.xlabel(self.__inputs__[0].title())
         plt.ylabel(self.__outputs__[0].title())
-        plt.show()
+        show_or_save_plot(filename)
         if return_object:
             return fig, ax
 
@@ -1583,6 +1599,7 @@ class Function:  # pylint: disable=too-many-public-methods
         disp_type="surface",
         alpha=0.6,
         cmap="viridis",
+        filename=None,
     ):
         """Plot 2-Dimensional Function, from a lower limit to an upper limit,
         by sampling the Function several times in the interval. The title of
@@ -1622,6 +1639,11 @@ class Function:  # pylint: disable=too-many-public-methods
         cmap : string, optional
             Colormap of plotted graph, which can be any of the color maps
             available in matplotlib. Default value is viridis.
+        filename : str | None, optional
+            The path the plot should be saved to. By default None, in which case
+            the plot will be shown instead of saved. Supported file endings are:
+            eps, jpg, jpeg, pdf, pgf, png, ps, raw, rgba, svg, svgz, tif, tiff
+            and webp (these are the formats supported by matplotlib).
 
         Returns
         -------
@@ -1694,7 +1716,7 @@ class Function:  # pylint: disable=too-many-public-methods
         axes.set_xlabel(self.__inputs__[0].title())
         axes.set_ylabel(self.__inputs__[1].title())
         axes.set_zlabel(self.__outputs__[0].title())
-        plt.show()
+        show_or_save_plot(filename)
 
     @staticmethod
     def compare_plots(  # pylint: disable=too-many-statements
@@ -1709,6 +1731,7 @@ class Function:  # pylint: disable=too-many-public-methods
         force_points=False,
         return_object=False,
         show=True,
+        filename=None,
     ):
         """Plots N 1-Dimensional Functions in the same plot, from a lower
         limit to an upper limit, by sampling the Functions several times in
@@ -1753,6 +1776,11 @@ class Function:  # pylint: disable=too-many-public-methods
             False.
         show : bool, optional
             If True, shows the plot. Default value is True.
+        filename : str | None, optional
+            The path the plot should be saved to. By default None, in which case
+            the plot will be shown instead of saved. Supported file endings are:
+            eps, jpg, jpeg, pdf, pgf, png, ps, raw, rgba, svg, svgz, tif, tiff
+            and webp (these are the formats supported by matplotlib).
 
         Returns
         -------
@@ -1828,7 +1856,7 @@ class Function:  # pylint: disable=too-many-public-methods
         plt.ylabel(ylabel)
 
         if show:
-            plt.show()
+            show_or_save_plot(filename)
 
         if return_object:
             return fig, ax
