@@ -36,27 +36,11 @@ Attention: The newest changes should be on top -->
 
 ### Changed
 
--
-
-### Fixed
-
--
-
-## [v1.6.2] - 2024-11-08
-
-### Added
-
-
 - ENH: Expansion of Encoders Implementation for Full Flights. [#679](https://github.com/RocketPy-Team/RocketPy/pull/679)
-- ENH: Implement optional plot saving [#597](https://github.com/RocketPy-Team/RocketPy/pull/597)
-
-### Changed
-
--
 
 ### Fixed
 
--
+- BUG: Sideslip Angle and Damping Coefficient Calculation [#729](https://github.com/RocketPy-Team/RocketPy/pull/729)
 
 ## [v1.6.2] - 2024-11-08
 
